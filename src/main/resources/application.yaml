@@ -1,0 +1,90 @@
+server:
+ port: 9090
+ 
+spring:
+  application:
+    name: API-GATEWAY   
+  config:
+   import:
+   CONFIG_SERVICE: http://${CONFIG_SERVICE_URL:localhost}:9296
+
+  cloud:
+   gateway:
+      routes:
+      - id:  PRODUCT-SERVICE 
+        uri: lb://PRODUCT-SERVICE
+        predicates:
+         - Path=/product/** 
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: PRODUCT-SERVICE 
+            fallbackuri: forword:/fallback/productservice
+            
+        
+         
+      - id:  ORDER-SERVICE  
+        uri: lb://ORDER-SERVICE 
+        predicates:
+         - Path=/order/** 
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: ORDER-SERVICE
+            fallbackuri: forword:/fallback/orderService
+              
+         
+      - id:  PAYMENT-SERVICE 
+        uri: lb://PAYMENT-SERVICE
+        predicates:
+         - Path=/payment/** 
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: PAYMENT-SERVICE
+            fallbackuri: forword:/fallback/paymentService
+            
+okta:
+  oauth2:
+    audience: api://default
+    issuer: https://dev-83683824.okta.com/oauth2/default
+    client-id: 0oa7y6vb382VnNeg25d7
+    client-secret: 01CD7i-maJdT28Bgoxnr2ZPIgREmbEx358QMjZvi
+    scopes: openid, profile, email, phone, offline_access        
+            
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: ${EUREKA_SERVER_ADDRESS:http://localhost:8761/eureka}             
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
